@@ -30,8 +30,14 @@
  RUN chmod +x /etc/service/http/run
 #Run the Apache2 service
  CMD service apache2 start && tail -F /var/log/apache2/error.log
-#Expose port 80
- EXPOSE 80
+#Enable SSH
+ RUN rm -f /etc/service/sshd/down
+ # Regenerate SSH host keys. baseimage-docker does not contain any, so you
+ # have to do that yourself. You may also comment out this instruction; the
+ # init system will auto-generate one during boot.
+ RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
+#Expose port 80 and 22
+ EXPOSE 80 22
 #Clean the apt
  RUN apt-get clean
  RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
